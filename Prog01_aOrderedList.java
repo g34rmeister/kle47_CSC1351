@@ -49,7 +49,7 @@ public class Prog01_aOrderedList {
                                                                                                                                         //prompts the user to reenter a corrected value
 				Scanner confirm = new Scanner(System.in);
 				String input = confirm.next();
-				if(input.equalsIgnoreCase("N")){                        //terminates the program
+				if(input.equalsIgnoreCase("N")){                        //terminates the program and prints a message for the user
 					System.out.println("\nProgram terminated by user.\n");  
 					System.exit(0);
 				}
@@ -64,33 +64,37 @@ public class Prog01_aOrderedList {
                 
                 //Part of Step 7: Operational Script
                 //Part of  Step 8: Extend our aOrderedList class
-		while(in.hasNextLine()){
-			String carDescriptor = in.nextLine();
-			String[] fields = carDescriptor.split(",");
-			if(fields[0].equals("A")){
-				Car c = new Car(fields[1], Integer.parseInt(fields[2]), Integer.parseInt(fields[3]));
-				list.add(c); 
+		while(in.hasNextLine()){                                        //reads from the input list to see if the program can continue
+			String carDescriptor = in.nextLine();                   //if so, get the details from the next input       
+			String[] fields = carDescriptor.split(",");        //split the fields of input with a comma
+			if(fields[0].equals("A")){                       //only adding that input with "A" at the first (0) field
+				Car c = new Car(fields[1], Integer.parseInt(fields[2]), Integer.parseInt(fields[3])); 
+                                //extract the fields of input: 1st field is a string, and 2nd and 3rd is a number
+                                //therefore Integer.parseInt must be used to extract the value from the initial input string
+				list.add(c);                            //add the object c with 3 separate parameters into the list
 			}
                         
                         //Explicit Delete Input
                         //for anything not containing "A"
 			else{
-				if(fields.length == 2){
-					int index = Integer.parseInt(fields[1]);
-					list.remove(index);
+				if(fields.length == 2){                                                 
+					int index = Integer.parseInt(fields[1]);                            //reads the year value from the 2nd column
+					list.remove(index);                                                 //then remove the corresponding indexed object
 				}
-				else{
-					String make = fields[1];
-					int year = Integer.parseInt(fields[2]);
+                                else {
+					String make = fields[1];                                            //reads the make value from the 2nd column
+					int year = Integer.parseInt(fields[2]);                             //reads the year value from the 3rd column
 					for(int i = 0; i < list.size(); i++){
 						Car c = (Car)list.get(i);
-						if(make.equals(c.getMake()) && year == c.getYear()){ //ensuring that there is deletion ONLY if the make and year matches
+						if(make.equals(c.getMake()) && year == c.getYear()){ //the corresponding object will be deleted only if the make and year value matches
 							list.remove(i);
 							break; 
 						}
 					}
 				}
+                                
 			}
+                        //everything else is skipped and ignored
 		}
 		in.close();
                 //Part of Step 4: Populating aOrderedList
@@ -123,14 +127,14 @@ public class Prog01_aOrderedList {
 				}
 			}
 		}
-		pw.println(list.toString()); 
-		pw.flush();
-		pw.close();
+		pw.println(list.toString());              //print the result of the aOrderedList toString method to the file below
+		pw.flush();                                 //flush the writer method from whatever is written above
+		pw.close();                                 //close the writer method
                 
                 //Part of Step 7: Operational Script
 		System.out.println("Number of cars:\t"+list.size()+"\n");   //modified to output the content of the array in a special format 
                                                                             //outputs the size of the array
-		for(int i = 0; i < list.size(); i++){
+		for(int i = 0; i < list.size(); i++){                       //repeat until i reaches the end of list
 			Car c = (Car)list.get(i);
 			int price = c.getPrice();
 			String moneyFormat = "";
@@ -146,11 +150,12 @@ public class Prog01_aOrderedList {
 					moneyFormat = "," + moneyFormat;        //adds a comma in front of the numbers
 				}
 			}
+                        moneyFormat = "$" + moneyFormat;                         //adds dollar sign to string moneyFormat
                         //Outputs the formatted content of the array as follows:
                         //  Make:   (string)
                         //  Year:   (decimal integer)
-                        //  Price:  (dollar sign and string)
-			System.out.printf("Make:\t%s\nYear:\t%d\nPrice:\t$%s\n\n", c.getMake(), c.getYear(), moneyFormat);
+                        //  Price:  (string)
+			System.out.printf("Make:\t%12s\nYear:\t%12d\nPrice:\t%12s\n\n", c.getMake(), c.getYear(), moneyFormat);
                         
 		}
 	}
@@ -174,8 +179,11 @@ public class Prog01_aOrderedList {
 }
 /**
 * Step 3: aOrderedList class
-* Includes part of Step 8: Extend aOrderedList class
-* 
+* Includes part of:
+*   Step 5: Managing Array Size
+*   Step 6: Completion of aOrderedList Class
+*   Step 8: Extend aOrderedList class
+*   
 * CSC 1351 Programming Project No 001
 * Section 002
 * @author Khánh Giang "Gerald" Lê
@@ -228,25 +236,26 @@ class aOrderedList {
 		}
                 //Binary Search algorithm to insert the object to the correct position
 		int start = 0;
-		int end = numObjects;
+		int end = numObjects;                                   //search is initiated from the beginning of the list to the end of the list, or numObjects
 		int mid = 0;
-		while(end > start){
-			mid = ((end - start) / 2) + start;
+		while(end > start){                                     //repeated until index to add is found
+			mid = ((end - start) / 2) + start;              //assign value for mid point by dividing (endpoint value minus starting point value) by 2, 
+                                                                        //then add starting point value
 			Comparable c = oList[mid];
 			int result = newObject.compareTo(c);
 			if(result < 0){
-				end = mid;
+				end = mid;                              //assign the mid value as an endpoint
 			}
-			else if(result > 0){
+			else if(result > 0){                            //assign mid value +1 as a starting point
 				start = mid+1;
 
 			}
 			else{
-				add(newObject, mid);
+				add(newObject, mid);                //add newObject to the index point of mid value
 				return;
 			}
 		}
-		add(newObject, start);
+		add(newObject, start);                              //if all else fails, add newObject to the index point of starting value
 	}
 	
 	//Part of Step 6: Completion of aOrderedList Class
@@ -262,7 +271,7 @@ class aOrderedList {
 	
 	public void remove(int index){      //removes the last element returned by the next() method
 		for(int i = index; i < numObjects-1; i++){
-			oList[index] = oList[index+1];
+			oList[i] = oList[i+1];
 		}
 		numObjects--;
 	}
@@ -286,16 +295,14 @@ class aOrderedList {
 		this.remove(curr);
 		curr = 0;
 	}
-	//method to read object and add them to oList
-	private void add(Comparable newObject, int index){ 
-		for(int i = numObjects; i > index; i--){
-			oList[i] = oList[i-1];
+	//method to read object and add them to the indexed position on oList
+	private void add(Comparable newObject, int index){              
+		for(int i = numObjects; i > index; i--){            //ensuring objects are added to the amount of numObjects
+			oList[i] = oList[i-1];                      //pushes every oList value down by 1
 		}
-		oList[index] = newObject;
-		numObjects++;
+		oList[index] = newObject;                           //adds the new object value to the new index number
+		numObjects++;                                       //increasing the object counter by 1
 	}
-	
-	
 }
 
 /**
